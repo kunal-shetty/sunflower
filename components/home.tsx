@@ -47,7 +47,7 @@ export function Home({ username }: HomeProps) {
         const stored = localStorage.getItem("taskapp_current_quote")
         if (stored) setQuote(JSON.parse(stored))
       }
-    } catch {}
+    } catch { }
   }, [])
 
   // Deadline logic
@@ -134,62 +134,57 @@ export function Home({ username }: HomeProps) {
           <p className="text-muted-foreground">— {quote.author}</p>
         </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="rounded-xl border bg-card p-6">
-                <p className="text-sm text-muted-foreground">Active Tasks</p>
-                <p className="text-3xl font-bold">
-                  {getTasks().filter((t: any) => !t.completed).length}
-                </p>
-              </div>
-              <div className="rounded-xl border bg-card p-6">
-                <p className="text-sm text-muted-foreground">Completed</p>
-                <p className="text-3xl font-bold">
-                  {getTasks().filter((t: any) => t.completed).length}
-                </p>
-              </div>
-            </div>
+        {/* Stats */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="rounded-xl border bg-card p-6">
+            <p className="text-sm text-muted-foreground">Active Tasks</p>
+            <p className="text-3xl font-bold">
+              {getTasks().filter((t: any) => !t.completed).length}
+            </p>
+          </div>
+          <div className="rounded-xl border bg-card p-6">
+            <p className="text-sm text-muted-foreground">Completed</p>
+            <p className="text-3xl font-bold">
+              {getTasks().filter((t: any) => t.completed).length}
+            </p>
+          </div>
+        </div>
         {/* Deadline Card */}
         <div className="relative overflow-hidden rounded-2xl border bg-card p-6 shadow-sm">
 
-  <div className="space-y-3">
-    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-      Next Deadline
-    </p>
+          <div className="space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Next Deadline
+            </p>
 
-    {nextTask ? (
-      <>
-        <h3 className="text-lg font-semibold text-foreground leading-snug">
-          {nextTask.title}
-        </h3>
+            {nextTask ? (
+              <>
+                <h3 className="text-lg font-semibold text-foreground leading-snug">
+                  {nextTask.title}
+                </h3>
 
-        <div
-          className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium ${
-            timeLeft === "Overdue"
-              ? "bg-destructive/10 text-destructive"
-              : "bg-muted text-muted-foreground"
-          }`}
-        >
-          {/* dot */}
-          <span
-            className={`h-2 w-2 rounded-full ${
-              timeLeft === "Overdue" ? "bg-destructive" : "bg-primary"
-            }`}
-          />
-          {timeLeft}
+                <div
+                  className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium ${timeLeft === "Overdue"
+                      ? "bg-destructive/10 text-destructive"
+                      : "bg-muted text-muted-foreground"
+                    }`}
+                >
+                  {/* dot */}
+                  <span
+                    className={`h-2 w-2 rounded-full ${timeLeft === "Overdue" ? "bg-destructive" : "bg-primary"
+                      }`}
+                  />
+                  {timeLeft}
+                </div>
+              </>
+            ) : (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                No upcoming deadlines
+              </div>
+            )}
+          </div>
         </div>
-      </>
-    ) : (
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <span className="h-2 w-2 rounded-full bg-emerald-500" />
-        No upcoming deadlines
-      </div>
-    )}
-  </div>
-</div>
-
-
-
       </div>
     </div>
   )
