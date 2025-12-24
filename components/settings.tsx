@@ -95,7 +95,7 @@ export function Settings() {
 
 
   return (
-    <div className="px-6 py-8 my-8">
+    <div className="px-6 py-12">
       <div className="mx-auto max-w-2xl space-y-6">
         {/* Header */}
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
