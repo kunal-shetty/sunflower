@@ -25,6 +25,19 @@ export function Tasks() {
   const [editDescription, setEditDescription] = useState("")
   const [editDeadline, setEditDeadline] = useState("")
   const [isAdding, setIsAdding] = useState(false)
+  const [theme, setTheme] = useState<"light" | "dark">("light")
+
+  useEffect(() => {
+    try {
+      const storedTheme = localStorage.getItem("taskapp_theme") as "light" | "dark" | null
+      if (storedTheme) {
+        setTheme(storedTheme)
+        document.documentElement.classList.toggle("dark", storedTheme === "dark")
+      }
+    } catch (error) {
+      console.error("[v0] Error loading theme:", error)
+    }
+  }, [])
 
   // Load tasks from localStorage
   useEffect(() => {

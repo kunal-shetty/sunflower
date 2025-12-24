@@ -2,8 +2,24 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useEffect, useState } from "react"
 
 export function BottomNav() {
+
+  const [theme, setTheme] = useState<"light" | "dark">("light")
+
+  useEffect(() => {
+    try {
+      const storedTheme = localStorage.getItem("taskapp_theme") as "light" | "dark" | null
+      if (storedTheme) {
+        setTheme(storedTheme)
+        document.documentElement.classList.toggle("dark", storedTheme === "dark")
+      }
+    } catch (error) {
+      console.error("[v0] Error loading theme:", error)
+    }
+  }, [])
+
   const pathname = usePathname()
 
   const tabs = [
@@ -70,11 +86,10 @@ export function BottomNav() {
             <Link
               key={tab.id}
               href={tab.href}
-              className={`flex flex-col items-center justify-center gap-1 transition-colors min-w-[64px] min-h-[48px] ${
-                isActive
+              className={`flex flex-col items-center justify-center gap-1 transition-colors min-w-[64px] min-h-[48px] ${isActive
                   ? "text-primary"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
               aria-label={tab.label}
             >
               <div className={`transition-transform ${isActive ? "scale-110" : ""}`}>
