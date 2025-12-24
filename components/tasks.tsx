@@ -25,6 +25,7 @@ export function Tasks() {
   const [editDescription, setEditDescription] = useState("")
   const [editDeadline, setEditDeadline] = useState("")
   const [isAdding, setIsAdding] = useState(false)
+  const [taskToDelete, setTaskToDelete] = useState<string | null>(null)
   const [theme, setTheme] = useState<"light" | "dark">("light")
 
   useEffect(() => {
@@ -142,19 +143,19 @@ export function Tasks() {
 
 
   const formatDeadline = (value: string) => {
-  if (!value) return null
+    if (!value) return null
 
-  const date = new Date(value)
+    const date = new Date(value)
 
-  return date.toLocaleString(undefined, {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  })
-}
+    return date.toLocaleString(undefined, {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    })
+  }
 
 
   return (
@@ -345,8 +346,8 @@ export function Tasks() {
                     <div className="flex-1 min-w-0">
                       <h3
                         className={`text-base font-medium leading-relaxed ${task.completed
-                            ? "line-through text-muted-foreground"
-                            : "text-foreground"
+                          ? "line-through text-muted-foreground"
+                          : "text-foreground"
                           }`}
                       >
                         {task.title}
@@ -355,8 +356,8 @@ export function Tasks() {
                       {task.description && (
                         <p
                           className={`mt-1 text-sm leading-relaxed whitespace-pre-wrap ${task.completed
-                              ? "line-through text-muted-foreground/80"
-                              : "text-muted-foreground"
+                            ? "line-through text-muted-foreground/80"
+                            : "text-muted-foreground"
                             }`}
                         >
                           {task.description}
@@ -393,7 +394,7 @@ export function Tasks() {
                       </button>
 
                       <button
-                        onClick={() => deleteTask(task.id)}
+                        onClick={() => setTaskToDelete(task.id)}
                         className="h-9 w-9 rounded-md flex items-center justify-center hover:bg-destructive/10 transition-colors"
                         aria-label="Delete task"
                       >
@@ -411,6 +412,7 @@ export function Tasks() {
                           />
                         </svg>
                       </button>
+
                     </div>
                   </div>
                 )}
@@ -419,6 +421,37 @@ export function Tasks() {
           )}
         </div>
       </div>
+
+      {taskToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-6">
+          <div className="w-full max-w-sm rounded-xl bg-card p-5 space-y-4">
+            <h3 className="text-base font-medium">Delete task?</h3>
+            <p className="text-sm text-muted-foreground">
+              This action cannot be undone.
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  deleteTask(taskToDelete)
+                  setTaskToDelete(null)
+                }}
+                className="flex-1 h-10 rounded-md bg-destructive text-destructive-foreground"
+              >
+                Delete
+              </button>
+
+              <button
+                onClick={() => setTaskToDelete(null)}
+                className="flex-1 h-10 rounded-md border"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
 
   )
