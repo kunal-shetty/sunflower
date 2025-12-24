@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -21,7 +20,7 @@ export function Onboarding({ onComplete }: OnboardingProps) {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6">
+    <div className="flex h-[100dvh] items-center justify-center bg-background px-6 overflow-hidden">
       <div className="w-full max-w-md space-y-8 text-center">
         <div className="space-y-4">
           <div className="mx-auto h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
@@ -34,24 +33,32 @@ export function Onboarding({ onComplete }: OnboardingProps) {
               />
             </svg>
           </div>
-          <h1 className="text-4xl font-bold tracking-tight text-foreground">Welcome</h1>
+
+          <h1 className="text-4xl font-bold tracking-tight text-foreground">
+            Welcome
+          </h1>
+
           <p className="text-lg text-muted-foreground leading-relaxed">
             Let's get started with your task management journey
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <Input
-              type="text"
-              placeholder="Enter your name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="h-12 text-base"
-              autoFocus
-            />
-          </div>
-          <Button type="submit" size="lg" className="w-full h-12 text-base" disabled={!name.trim()}>
+          <Input
+            type="text"
+            placeholder="Enter your name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="h-12 text-base"
+            autoFocus
+          />
+
+          <Button
+            type="submit"
+            size="lg"
+            className="w-full h-12 text-base"
+            disabled={!name.trim()}
+          >
             Continue
           </Button>
         </form>

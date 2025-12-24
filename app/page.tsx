@@ -13,42 +13,34 @@ export default function Page() {
   const [currentTab, setCurrentTab] = useState<Tab>("home")
   const [username, setUsername] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-const [theme, setTheme] = useState<"light" | "dark">("light")
+  const [theme, setTheme] = useState<"light" | "dark">("light")
 
   useEffect(() => {
-    try {
-      const storedTheme = localStorage.getItem("taskapp_theme") as "light" | "dark" | null
-      if (storedTheme) {
-        setTheme(storedTheme)
-        document.documentElement.classList.toggle("dark", storedTheme === "dark")
-      }
-    } catch (error) {
-      console.error("[v0] Error loading theme:", error)
+    const storedTheme = localStorage.getItem("taskapp_theme") as
+      | "light"
+      | "dark"
+      | null
+
+    if (storedTheme) {
+      setTheme(storedTheme)
+      document.documentElement.classList.toggle("dark", storedTheme === "dark")
     }
   }, [])
+
   useEffect(() => {
-    try {
-      const storedUsername = localStorage.getItem("taskapp_username")
-      setUsername(storedUsername)
-    } catch (error) {
-      console.error("[v0] Error loading username:", error)
-    } finally {
-      setIsLoading(false)
-    }
+    const storedUsername = localStorage.getItem("taskapp_username")
+    setUsername(storedUsername)
+    setIsLoading(false)
   }, [])
 
   const handleOnboardingComplete = (name: string) => {
-    try {
-      localStorage.setItem("taskapp_username", name)
-      setUsername(name)
-    } catch (error) {
-      console.error("[v0] Error saving username:", error)
-    }
+    localStorage.setItem("taskapp_username", name)
+    setUsername(name)
   }
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
+      <div className="flex h-[100dvh] items-center justify-center bg-background">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
       </div>
     )
@@ -59,12 +51,13 @@ const [theme, setTheme] = useState<"light" | "dark">("light")
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-background pb-20">
-      <main className="flex-1">
+    <div className="flex h-[100dvh] flex-col bg-background overflow-hidden">
+      <main className="flex-1 overflow-y-auto overscroll-none">
         {currentTab === "home" && <Home username={username} />}
         {currentTab === "tasks" && <Tasks />}
         {currentTab === "settings" && <Settings />}
       </main>
+
       <BottomNav currentTab={currentTab} onTabChange={setCurrentTab} />
     </div>
   )
