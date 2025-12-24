@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Download, Trash, Trash2 } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 interface SettingsProps {
   username: string
@@ -15,6 +16,7 @@ export function Settings({ username, onNameChange }: SettingsProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [showResetConfirmation, setShowResetConfirmation] = useState(false)
   const [newUsername, setNewUsername] = useState(username)
+  const router = useRouter()
 
   useEffect(() => {
     try {
@@ -44,7 +46,6 @@ export function Settings({ username, onNameChange }: SettingsProps) {
       const raw = localStorage.getItem("taskapp_tasks") || "[]"
       const tasks = JSON.parse(raw)
 
-      if (!tasks.length) return
 
       const formatDate = (value: string) => {
         if (!value) return "No deadline"
@@ -57,13 +58,17 @@ export function Settings({ username, onNameChange }: SettingsProps) {
       let content = `TASK LIST – ${new Date().toDateString()}\n`
       content += `======================\n\n`
 
-      tasks.forEach((task: any, index: number) => {
-        content += `${index + 1}. Title: ${task.title}\n`
-        content += `Status: ${task.completed ? "Completed" : "Pending"}\n`
-        content += `Deadline: ${formatDate(task.deadline)}\n`
-        content += `Description:\n${task.description || "—"}\n`
-        content += `\n--------------------------------------\n\n`
-      })
+      if (!tasks.length)
+        content += `No tasks found\n`
+      else {
+        tasks.forEach((task: any, index: number) => {
+          content += `${index + 1}. Title: ${task.title}\n`
+          content += `Status: ${task.completed ? "Completed" : "Pending"}\n`
+          content += `Deadline: ${formatDate(task.deadline)}\n`
+          content += `Description:\n${task.description || "—"}\n`
+          content += `\n--------------------------------------\n\n`
+        })
+      }
 
       const blob = new Blob([content], { type: "text/plain" })
       const url = URL.createObjectURL(blob)
@@ -101,6 +106,7 @@ export function Settings({ username, onNameChange }: SettingsProps) {
   const handleNameChange = () => {
     onNameChange(newUsername)
     setShowResetConfirmation(false)
+    router.push("/")
   }
 
   return (
@@ -123,9 +129,8 @@ export function Settings({ username, onNameChange }: SettingsProps) {
               aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
             >
               <div
-                className={`absolute top-1 h-9 w-9 rounded-full bg-primary transition-transform duration-200 flex items-center justify-center ${
-                  theme === "dark" ? "translate-x-9" : "translate-x-1"
-                }`}
+                className={`absolute top-1 h-9 w-9 rounded-full bg-primary transition-transform duration-200 flex items-center justify-center ${theme === "dark" ? "translate-x-9" : "translate-x-1"
+                  }`}
               >
                 {theme === "light" ? (
                   <svg
@@ -278,20 +283,30 @@ export function Settings({ username, onNameChange }: SettingsProps) {
         {/* Username Change */}
         <Card className="p-6">
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <h3 className="text-base font-medium text-foreground">Change Username</h3>
-                <p className="text-sm text-muted-foreground">Enter your new username</p>
-              </div>
+            <div className="space-y-1">
+              <h3 className="text-base font-medium text-foreground">
+                Change Username
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Enter your new username
+              </p>
             </div>
-            <div className="flex items-center justify-between">
+
+            {/* Input + Button */}
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <input
                 type="text"
                 value={newUsername}
                 onChange={(e) => setNewUsername(e.target.value)}
-                className="border rounded p-2 flex-1 mr-3"
+                className="w-full rounded border p-2 text-base sm:flex-1"
+                placeholder="New username"
               />
-              <Button onClick={handleNameChange} variant="outline" className="h-10 bg-transparent">
+
+              <Button
+                onClick={handleNameChange}
+                variant="outline"
+                className="h-10 w-full sm:w-auto bg-transparent"
+              >
                 Change
               </Button>
             </div>

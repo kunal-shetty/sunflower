@@ -179,7 +179,7 @@ export function Tasks() {
 
         {/* Add Task Form */}
         {isAdding && (
-          <Card className="p-6 space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
+          <Card className="p-6 space-y-4 animate-in fade-in slide-in-from-top-2 duration-200 gap-2">
             <Input
               placeholder="Task title *"
               value={newTitle}
@@ -210,23 +210,23 @@ export function Tasks() {
 
             <div className="flex gap-3">
               <Button
-                onClick={addTask}
-                className="flex-1 h-11"
-                disabled={!newTitle.trim()}
-              >
-                Add Task
-              </Button>
-
-              <Button
                 variant="outline"
                 onClick={() => {
                   setIsAdding(false)
                   setNewTitle("")
                   setNewDescription("")
                 }}
-                className="h-11"
+                className="h-11 flex-2"
               >
                 Cancel
+              </Button>
+
+              <Button
+                onClick={addTask}
+                className="flex-2 h-11"
+                disabled={!newTitle.trim()}
+              >
+                Add Task
               </Button>
             </div>
           </Card>
