@@ -26,19 +26,6 @@ export function Tasks() {
   const [editDeadline, setEditDeadline] = useState("")
   const [isAdding, setIsAdding] = useState(false)
   const [taskToDelete, setTaskToDelete] = useState<string | null>(null)
-  const [theme, setTheme] = useState<"light" | "dark">("light")
-
-  useEffect(() => {
-    try {
-      const storedTheme = localStorage.getItem("taskapp_theme") as "light" | "dark" | null
-      if (storedTheme) {
-        setTheme(storedTheme)
-        document.documentElement.classList.toggle("dark", storedTheme === "dark")
-      }
-    } catch (error) {
-      console.error("[v0] Error loading theme:", error)
-    }
-  }, [])
 
   // Load tasks from localStorage
   useEffect(() => {
@@ -54,6 +41,19 @@ export function Tasks() {
     }
   }, [])
 
+
+  const scheduleNativeNotification = (task: any) => {
+  if (!task.deadline) return
+
+  const deadlineMillis = new Date(task.deadline).getTime()
+
+  ;(window as any).Android?.scheduleTaskNotification(
+    task.title,
+    deadlineMillis
+  )
+}
+
+
   // Save tasks to localStorage
   const saveTasks = (updatedTasks: Task[]) => {
     try {
@@ -65,31 +65,54 @@ export function Tasks() {
   }
 
   const addTask = () => {
-    if (!newTitle.trim()) return
+  if (!newTitle.trim()) return
 
-    const newTask: Task = {
-      id: Date.now().toString(),
-      title: newTitle.trim(),
-      description: newDescription.trim(),
-      deadline: newDeadline,
-      completed: false,
-      createdAt: Date.now(),
-    }
-
-    saveTasks([newTask, ...tasks])
-    setNewTitle("")
-    setNewDescription("")
-    setNewDeadline("")
-    setIsAdding(false)
+  const newTask: Task = {
+    id: Date.now().toString(),
+    title: newTitle.trim(),
+    description: newDescription.trim(),
+    deadline: newDeadline,
+    completed: false,
+    createdAt: Date.now(),
   }
+
+  const updatedTasks = [newTask, ...tasks]
+  saveTasks(updatedTasks)
+
+  scheduleNativeNotification(newTask)
+
+  setNewTitle("")
+  setNewDescription("")
+  setNewDeadline("")
+  setIsAdding(false)
+}
+
   const toggleComplete = (id: string) => {
-    const updated = tasks.map((task) => (task.id === id ? { ...task, completed: !task.completed } : task))
-    saveTasks(updated)
-  }
+  const updated = tasks.map((task) => {
+    if (task.id === id) {
+      if (!task.completed) {
+        //  cancel when marking complete
+        ;(window as any).Android?.cancelTaskNotification(task.title)
+      }
+
+      return { ...task, completed: !task.completed }
+    }
+    return task
+  })
+
+  saveTasks(updated)
+}
+
 
   const deleteTask = (id: string) => {
-    saveTasks(tasks.filter((task) => task.id !== id))
+  const task = tasks.find(t => t.id === id)
+
+  if (task) {
+    ;(window as any).Android?.cancelTaskNotification(task.title)
   }
+
+  saveTasks(tasks.filter((task) => task.id !== id))
+}
 
   const startEdit = (task: Task) => {
     setEditingId(task.id)
@@ -99,23 +122,28 @@ export function Tasks() {
   }
 
   const saveEdit = () => {
-    if (!editingId || !editTitle.trim()) return
+  if (!editingId || !editTitle.trim()) return
 
-    saveTasks(
-      tasks.map(t =>
-        t.id === editingId
-          ? {
-            ...t,
-            title: editTitle.trim(),
-            description: editDescription.trim(),
-            deadline: editDeadline,
-          }
-          : t
-      )
-    )
+  const updatedTasks = tasks.map(t => {
+    if (t.id === editingId) {
+      const updatedTask = {
+        ...t,
+        title: editTitle.trim(),
+        description: editDescription.trim(),
+        deadline: editDeadline,
+      }
 
-    cancelEdit()
-  }
+      scheduleNativeNotification(updatedTask)
+
+      return updatedTask
+    }
+    return t
+  })
+
+  saveTasks(updatedTasks)
+  cancelEdit()
+}
+
 
   const cancelEdit = () => {
     setEditingId(null)
