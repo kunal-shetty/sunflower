@@ -142,13 +142,20 @@ export function Tasks() {
 
 
   const formatDeadline = (value: string) => {
-    if (!value) return null
-    const date = new Date(value)
-    return date.toLocaleString(undefined, {
-      dateStyle: "medium",
-      timeStyle: "short",
-    })
-  }
+  if (!value) return null
+
+  const date = new Date(value)
+
+  return date.toLocaleString(undefined, {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  })
+}
+
 
   return (
     <div className="px-6 py-8">
