@@ -3,12 +3,18 @@
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Download, Trash, Trash2 } from "lucide-react";
+import { Download, Trash, Trash2 } from "lucide-react"
 
-export function Settings() {
+interface SettingsProps {
+  username: string
+  onNameChange: (name: string | null) => void
+}
+
+export function Settings({ username, onNameChange }: SettingsProps) {
   const [theme, setTheme] = useState<"light" | "dark">("light")
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
-  const [showResetConfirmation, setShowResetConfirmation] = useState(false);
+  const [showResetConfirmation, setShowResetConfirmation] = useState(false)
+  const [newUsername, setNewUsername] = useState(username)
 
   useEffect(() => {
     try {
@@ -73,7 +79,6 @@ export function Settings() {
     }
   }
 
-
   const deleteAllTasks = () => {
     try {
       localStorage.setItem("taskapp_tasks", "[]")
@@ -85,33 +90,31 @@ export function Settings() {
   }
 
   const resetAllData = () => {
-  try {
-    localStorage.clear()
-    window.location.reload()
-  } catch (error) {
-    console.error("Failed to reset app data:", error)
-  } 
-}
+    try {
+      localStorage.clear()
+      window.location.reload()
+    } catch (error) {
+      console.error("Failed to reset app data:", error)
+    }
+  }
 
+  const handleNameChange = () => {
+    onNameChange(newUsername)
+    setShowResetConfirmation(false)
+  }
 
   return (
     <div className="px-6 py-12">
       <div className="mx-auto max-w-2xl space-y-6">
         {/* Header */}
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Settings
-        </h1>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Settings</h1>
 
         {/* Theme Toggle */}
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <h3 className="text-base font-medium text-foreground">
-                Appearance
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                {theme === "light" ? "Light mode" : "Dark mode"}
-              </p>
+              <h3 className="text-base font-medium text-foreground">Appearance</h3>
+              <p className="text-sm text-muted-foreground">{theme === "light" ? "Light mode" : "Dark mode"}</p>
             </div>
 
             <button
@@ -120,8 +123,9 @@ export function Settings() {
               aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
             >
               <div
-                className={`absolute top-1 h-9 w-9 rounded-full bg-primary transition-transform duration-200 flex items-center justify-center ${theme === "dark" ? "translate-x-9" : "translate-x-1"
-                  }`}
+                className={`absolute top-1 h-9 w-9 rounded-full bg-primary transition-transform duration-200 flex items-center justify-center ${
+                  theme === "dark" ? "translate-x-9" : "translate-x-1"
+                }`}
               >
                 {theme === "light" ? (
                   <svg
@@ -161,18 +165,10 @@ export function Settings() {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <h3 className="text-base font-medium text-foreground">
-                Export Tasks
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Download all tasks as JSON
-              </p>
+              <h3 className="text-base font-medium text-foreground">Export Tasks</h3>
+              <p className="text-sm text-muted-foreground">Download all tasks as JSON</p>
             </div>
-            <Button
-              onClick={exportTasks}
-              variant="outline"
-              className="h-10 bg-transparent"
-            >
+            <Button onClick={exportTasks} variant="outline" className="h-10 bg-transparent">
               <Download />
             </Button>
           </div>
@@ -183,42 +179,93 @@ export function Settings() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <h3 className="text-base font-medium text-foreground">
-                  Delete All Tasks
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  Permanently remove all tasks
-                </p>
+                <h3 className="text-base font-medium text-foreground">Delete All Tasks</h3>
+                <p className="text-sm text-muted-foreground">Permanently remove all tasks</p>
               </div>
-              <Button
-                onClick={() => setShowDeleteConfirm(true)}
-                variant="destructive"
-                className="h-10"
-              >
+              <Button onClick={() => setShowDeleteConfirm(true)} variant="destructive" className="h-10">
                 <Trash />
               </Button>
             </div>
 
             {showDeleteConfirm && (
               <div className="rounded-lg border border-destructive/50 bg-destructive/5 p-4 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
-                <p className="text-sm font-medium text-foreground">
-                  Are you sure you want to delete all tasks?
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  This action cannot be undone.
-                </p>
+                <p className="text-sm font-medium text-foreground">Are you sure you want to delete all tasks?</p>
+                <p className="text-sm text-muted-foreground">This action cannot be undone.</p>
                 <div className="flex gap-3">
-                  <Button
-                    onClick={deleteAllTasks}
-                    variant="destructive"
-                    className="flex-1 h-10"
-                  >
+                  <Button onClick={deleteAllTasks} variant="destructive" className="flex-1 h-10">
                     Yes, Delete All
                   </Button>
+                  <Button onClick={() => setShowDeleteConfirm(false)} variant="outline" className="h-10">
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </Card>
+
+        {/* Hard reset everything */}
+        <Card className="relative overflow-hidden border-destructive/40 bg-destructive/5 p-6">
+          <div className="space-y-4">
+            <div className="flex items-start justify-between gap-4">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <svg className="h-5 w-5 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 9v4m0 4h.01M10.29 3.86l-7.4 12.8A2 2 0 004.61 20h14.78a2 2 0 001.72-3.34l-7.4-12.8a2 2 0 00-3.42 0z"
+                    />
+                  </svg>
+
+                  <h3 className="text-base font-semibold text-destructive">Reset Everything</h3>
+                </div>
+
+                <p className="text-sm text-destructive/90 leading-relaxed">
+                  This will permanently erase all tasks, preferences, and app data stored on this device.
+                </p>
+              </div>
+
+              <Button onClick={() => setShowResetConfirmation(true)} variant="destructive" className="h-10 shrink-0">
+                <Trash2 />
+              </Button>
+            </div>
+
+            {showResetConfirmation && (
+              <div className="rounded-lg border border-destructive bg-destructive/10 p-4 space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="flex items-start gap-3">
+                  <svg
+                    className="h-6 w-6 text-destructive mt-0.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 9v4m0 4h.01M10.29 3.86l-7.4 12.8A2 2 0 004.61 20h14.78a2 2 0 001.72-3.34l-7.4-12.8a2 2 0 00-3.42 0z"
+                    />
+                  </svg>
+
+                  <div className="space-y-1">
+                    <p className="text-sm font-semibold text-destructive">This action is irreversible</p>
+                    <p className="text-sm text-destructive/90">
+                      Once confirmed, all data will be permanently deleted and cannot be recovered.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
+                  <Button onClick={resetAllData} variant="destructive" className="flex-1 h-10">
+                    Yes, Reset Everything
+                  </Button>
+
                   <Button
-                    onClick={() => setShowDeleteConfirm(false)}
+                    onClick={() => setShowResetConfirmation(false)}
                     variant="outline"
-                    className="h-10"
+                    className="h-10 border-destructive/40 text-destructive hover:bg-destructive/10"
                   >
                     Cancel
                   </Button>
@@ -228,106 +275,34 @@ export function Settings() {
           </div>
         </Card>
 
-{/* Hard reset everything */}
-<Card className="relative overflow-hidden border-destructive/40 bg-destructive/5 p-6">
-  <div className="space-y-4">
-    <div className="flex items-start justify-between gap-4">
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <svg
-            className="h-5 w-5 text-destructive"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 9v4m0 4h.01M10.29 3.86l-7.4 12.8A2 2 0 004.61 20h14.78a2 2 0 001.72-3.34l-7.4-12.8a2 2 0 00-3.42 0z"
-            />
-          </svg>
-
-          <h3 className="text-base font-semibold text-destructive">
-            Reset Everything
-          </h3>
-        </div>
-
-        <p className="text-sm text-destructive/90 leading-relaxed">
-          This will permanently erase all tasks, preferences, and app data
-          stored on this device.
-        </p>
-      </div>
-
-      <Button
-        onClick={() => setShowResetConfirmation(true)}
-        variant="destructive"
-        className="h-10 shrink-0"
-      >
-        <Trash2/>
-      </Button>
-    </div>
-
-    {showResetConfirmation && (
-      <div className="rounded-lg border border-destructive bg-destructive/10 p-4 space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
-        <div className="flex items-start gap-3">
-          <svg
-            className="h-6 w-6 text-destructive mt-0.5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 9v4m0 4h.01M10.29 3.86l-7.4 12.8A2 2 0 004.61 20h14.78a2 2 0 001.72-3.34l-7.4-12.8a2 2 0 00-3.42 0z"
-            />
-          </svg>
-
-          <div className="space-y-1">
-            <p className="text-sm font-semibold text-destructive">
-              This action is irreversible
-            </p>
-            <p className="text-sm text-destructive/90">
-              Once confirmed, all data will be permanently deleted and cannot be recovered.
-            </p>
+        {/* Username Change */}
+        <Card className="p-6">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <h3 className="text-base font-medium text-foreground">Change Username</h3>
+                <p className="text-sm text-muted-foreground">Enter your new username</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <input
+                type="text"
+                value={newUsername}
+                onChange={(e) => setNewUsername(e.target.value)}
+                className="border rounded p-2 flex-1 mr-3"
+              />
+              <Button onClick={handleNameChange} variant="outline" className="h-10 bg-transparent">
+                Change
+              </Button>
+            </div>
           </div>
-        </div>
-
-        <div className="flex gap-3">
-          <Button
-            onClick={resetAllData}
-            variant="destructive"
-            className="flex-1 h-10"
-          >
-            Yes, Reset Everything
-          </Button>
-
-          <Button
-            onClick={() => setShowResetConfirmation(false)}
-            variant="outline"
-            className="h-10 border-destructive/40 text-destructive hover:bg-destructive/10"
-          >
-            Cancel
-          </Button>
-        </div>
-      </div>
-    )}
-  </div>
-</Card>
-
+        </Card>
 
         {/* App Info */}
         <Card className="p-6">
           <div className="space-y-3 text-center">
             <div className="mx-auto h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-              <svg
-                className="h-6 w-6 text-primary"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg className="h-6 w-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -337,17 +312,12 @@ export function Settings() {
               </svg>
             </div>
             <div>
-              <h3 className="text-base font-medium text-foreground">
-                Task App
-              </h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                Version 1.0.0
-              </p>
+              <h3 className="text-base font-medium text-foreground">Task App</h3>
+              <p className="text-sm text-muted-foreground mt-1">Version 1.0.0</p>
             </div>
           </div>
         </Card>
       </div>
     </div>
-
   )
 }
