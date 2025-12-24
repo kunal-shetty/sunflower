@@ -90,12 +90,12 @@ export function Settings() {
     window.location.reload()
   } catch (error) {
     console.error("Failed to reset app data:", error)
-  }
+  } 
 }
 
 
   return (
-    <div className="px-6 py-8">
+    <div className="px-6 py-8 my-8">
       <div className="mx-auto max-w-2xl space-y-6">
         {/* Header */}
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
