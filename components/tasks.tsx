@@ -10,6 +10,7 @@ interface Task {
   id: string
   title: string
   description: string
+  deadline: string
   completed: boolean
   createdAt: number
 }
@@ -18,9 +19,11 @@ export function Tasks() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [newTitle, setNewTitle] = useState("")
   const [newDescription, setNewDescription] = useState("")
+  const [newDeadline, setNewDeadline] = useState("")
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editTitle, setEditTitle] = useState("")
   const [editDescription, setEditDescription] = useState("")
+  const [editDeadline, setEditDeadline] = useState("")
   const [isAdding, setIsAdding] = useState(false)
 
   // Load tasks from localStorage
@@ -54,6 +57,7 @@ export function Tasks() {
       id: Date.now().toString(),
       title: newTitle.trim(),
       description: newDescription.trim(),
+      deadline: newDeadline,
       completed: false,
       createdAt: Date.now(),
     }
@@ -61,9 +65,9 @@ export function Tasks() {
     saveTasks([newTask, ...tasks])
     setNewTitle("")
     setNewDescription("")
+    setNewDeadline("")
     setIsAdding(false)
   }
-
   const toggleComplete = (id: string) => {
     const updated = tasks.map((task) => (task.id === id ? { ...task, completed: !task.completed } : task))
     saveTasks(updated)
@@ -80,21 +84,29 @@ export function Tasks() {
   }
 
   const saveEdit = () => {
-    if (!editTitle.trim() || !editingId) return
+    if (!editingId || !editTitle.trim()) return
 
-    const updated = tasks.map((task) =>
-      task.id === editingId ? { ...task, title: editTitle.trim(), description: editDescription.trim() } : task,
+    saveTasks(
+      tasks.map(t =>
+        t.id === editingId
+          ? {
+            ...t,
+            title: editTitle.trim(),
+            description: editDescription.trim(),
+            deadline: editDeadline,
+          }
+          : t
+      )
     )
-    saveTasks(updated)
-    setEditingId(null)
-    setEditTitle("")
-    setEditDescription("")
+
+    cancelEdit()
   }
 
   const cancelEdit = () => {
     setEditingId(null)
     setEditTitle("")
     setEditDescription("")
+    setEditDeadline("")
   }
 
   // Sort: active first, completed last
@@ -114,6 +126,16 @@ export function Tasks() {
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [])
+
+
+  const formatDeadline = (value: string) => {
+    if (!value) return null
+    const date = new Date(value)
+    return date.toLocaleString(undefined, {
+      dateStyle: "medium",
+      timeStyle: "short",
+    })
+  }
 
   return (
     <div className="min-h-[calc(100vh-5rem)] px-6 py-8">
@@ -151,6 +173,11 @@ export function Tasks() {
               onChange={(e) => setNewDescription(e.target.value)}
               rows={3}
               className="text-base resize-none"
+            />
+            <Input
+              type="datetime-local"
+              value={newDeadline}
+              onChange={e => setNewDeadline(e.target.value)}
             />
             <div className="flex gap-3">
               <Button onClick={addTask} className="flex-1 h-11" disabled={!newTitle.trim()}>
@@ -205,6 +232,11 @@ export function Tasks() {
                       rows={3}
                       className="text-base resize-none"
                     />
+                    <Input
+                      type="datetime-local"
+                      value={editDeadline}
+                      onChange={e => setEditDeadline(e.target.value)}
+                    />
                     <div className="flex gap-3">
                       <Button onClick={saveEdit} className="flex-1 h-10" disabled={!editTitle.trim()}>
                         Save
@@ -232,19 +264,24 @@ export function Tasks() {
                     {/* Content */}
                     <div className="flex-1 min-w-0">
                       <h3
-                        className={`text-base font-medium leading-relaxed ${
-                          task.completed ? "line-through text-muted-foreground" : "text-foreground"
-                        }`}
+                        className={`text-base font-medium leading-relaxed ${task.completed ? "line-through text-muted-foreground" : "text-foreground"
+                          }`}
                       >
                         {task.title}
                       </h3>
                       {task.description && (
                         <p
-                          className={`mt-1 text-sm leading-relaxed whitespace-pre-wrap ${
-                            task.completed ? "line-through text-muted-foreground/80" : "text-muted-foreground"
-                          }`}
+                          className={`mt-1 text-sm leading-relaxed whitespace-pre-wrap ${task.completed ? "line-through text-muted-foreground/80" : "text-muted-foreground"
+                            }`}
                         >
                           {task.description}
+                        </p>
+                      )}
+
+                      {/* ✅ Deadline shown LAST */}
+                      {task.deadline && (
+                        <p className="mt-2 text-xs text-muted-foreground">
+                          Deadline: {formatDeadline(task.deadline)}
                         </p>
                       )}
                     </div>

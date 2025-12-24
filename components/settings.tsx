@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { Download, Trash } from "lucide-react";
 
 export function Settings() {
   const [theme, setTheme] = useState<"light" | "dark">("light")
@@ -32,20 +33,45 @@ export function Settings() {
   }
 
   const exportTasks = () => {
-    try {
-      const tasks = localStorage.getItem("taskapp_tasks") || "[]"
-      const dataStr = JSON.stringify(JSON.parse(tasks), null, 2)
-      const dataBlob = new Blob([dataStr], { type: "application/json" })
-      const url = URL.createObjectURL(dataBlob)
-      const link = document.createElement("a")
-      link.href = url
-      link.download = `tasks-${new Date().toISOString().split("T")[0]}.json`
-      link.click()
-      URL.revokeObjectURL(url)
-    } catch (error) {
-      console.error("[v0] Error exporting tasks:", error)
+  try {
+    const raw = localStorage.getItem("taskapp_tasks") || "[]"
+    const tasks = JSON.parse(raw)
+
+    if (!tasks.length) return
+
+    const formatDate = (value: string) => {
+      if (!value) return "No deadline"
+      return new Date(value).toLocaleString(undefined, {
+        dateStyle: "medium",
+        timeStyle: "short",
+      })
     }
+
+    let content = `TASK LIST – ${new Date().toDateString()}\n`
+    content += `======================\n\n`
+
+    tasks.forEach((task: any, index: number) => {
+      content += `${index + 1}. Title: ${task.title}\n`
+      content += `Status: ${task.completed ? "Completed" : "Pending"}\n`
+      content += `Deadline: ${formatDate(task.deadline)}\n`
+      content += `Description:\n${task.description || "—"}\n`
+      content += `\n--------------------------------------\n\n`
+    })
+
+    const blob = new Blob([content], { type: "text/plain" })
+    const url = URL.createObjectURL(blob)
+
+    const link = document.createElement("a")
+    link.href = url
+    link.download = `tasks-${new Date().toISOString().split("T")[0]}.txt`
+    link.click()
+
+    URL.revokeObjectURL(url)
+  } catch (error) {
+    console.error("Error exporting tasks:", error)
   }
+}
+
 
   const deleteAllTasks = () => {
     try {
@@ -122,15 +148,7 @@ export function Settings() {
               <p className="text-sm text-muted-foreground">Download all tasks as JSON</p>
             </div>
             <Button onClick={exportTasks} variant="outline" className="h-10 bg-transparent">
-              <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
-              </svg>
-              Export
+              <Download/>
             </Button>
           </div>
         </Card>
@@ -144,7 +162,7 @@ export function Settings() {
                 <p className="text-sm text-muted-foreground">Permanently remove all tasks</p>
               </div>
               <Button onClick={() => setShowDeleteConfirm(true)} variant="destructive" className="h-10">
-                Delete All
+                <Trash/>
               </Button>
             </div>
 

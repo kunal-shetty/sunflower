@@ -13,7 +13,19 @@ export default function Page() {
   const [currentTab, setCurrentTab] = useState<Tab>("home")
   const [username, setUsername] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+const [theme, setTheme] = useState<"light" | "dark">("light")
 
+  useEffect(() => {
+    try {
+      const storedTheme = localStorage.getItem("taskapp_theme") as "light" | "dark" | null
+      if (storedTheme) {
+        setTheme(storedTheme)
+        document.documentElement.classList.toggle("dark", storedTheme === "dark")
+      }
+    } catch (error) {
+      console.error("[v0] Error loading theme:", error)
+    }
+  }, [])
   useEffect(() => {
     try {
       const storedUsername = localStorage.getItem("taskapp_username")
