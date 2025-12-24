@@ -1,24 +1,17 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
 import { Home } from "@/components/home"
-import { BottomNav } from "@/components/bottom-nav"
 
 export default function HomePage() {
   const [username, setUsername] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const router = useRouter()
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("taskapp_username")
-    if (!storedUsername) {
-      router.push("/")
-    } else {
-      setUsername(storedUsername)
-    }
+    setUsername(storedUsername)
     setIsLoading(false)
-  }, [router])
+  }, [])
 
   if (isLoading || !username) {
     return (
@@ -28,12 +21,5 @@ export default function HomePage() {
     )
   }
 
-  return (
-    <div className="h-[100dvh] overflow-hidden bg-background">
-      <div className="h-[calc(100dvh-5rem)] overflow-y-auto">
-        <Home username={username} />
-      </div>
-      <BottomNav currentView="home" />
-    </div>
-  )
+  return <Home username={username} />
 }

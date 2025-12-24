@@ -166,7 +166,7 @@ export function Settings({ username, onNameChange }: SettingsProps) {
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <h3 className="text-base font-medium text-foreground">Export Tasks</h3>
-              <p className="text-sm text-muted-foreground">Download all tasks as JSON</p>
+              <p className="text-sm text-muted-foreground">Download all tasks</p>
             </div>
             <Button onClick={exportTasks} variant="outline" className="h-10 bg-transparent">
               <Download />

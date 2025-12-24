@@ -33,7 +33,6 @@ export default function TasksPage() {
       <div className="h-[calc(100dvh-5rem)] overflow-y-auto">
         <Tasks />
       </div>
-      <BottomNav currentView="tasks" />
     </div>
   )
 }

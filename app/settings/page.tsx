@@ -40,7 +40,6 @@ export default function SettingsPage() {
       <div className="h-[calc(100dvh-5rem)] overflow-y-auto">
         <Settings username={username} onNameChange={handleNameChange} />
       </div>
-      <BottomNav currentView="settings" />
     </div>
   )
 }
