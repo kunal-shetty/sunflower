@@ -95,6 +95,7 @@ export function Tasks() {
     setEditingId(task.id)
     setEditTitle(task.title)
     setEditDescription(task.description)
+    setEditDeadline(task.deadline)
   }
 
   const saveEdit = () => {
