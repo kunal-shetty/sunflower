@@ -31,11 +31,6 @@ export default function ClientLayout({
     }
   }, [])
 
-  // ⏳ While status is unknown, don't render anything yet
-  if (isOnline === null) {
-    return null
-  }
-
   // 🌻 Offline UI
   if (!isOnline) {
     return <OfflineScreen />
@@ -44,7 +39,8 @@ export default function ClientLayout({
   const showBottomNav =
     pathname === "/home" ||
     pathname === "/tasks" ||
-    pathname === "/settings" 
+    pathname === "/settings" ||
+    pathname === "/focus"
 
   return (
     <div className="flex h-[100dvh] flex-col bg-background overflow-hidden">
