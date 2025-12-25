@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card } from "@/components/ui/card"
+import { ListOrdered } from "lucide-react"
 
 interface Task {
   id: string
@@ -26,6 +27,7 @@ export function Tasks() {
   const [editDeadline, setEditDeadline] = useState("")
   const [isAdding, setIsAdding] = useState(false)
   const [taskToDelete, setTaskToDelete] = useState<string | null>(null)
+  const [autoNumber, setAutoNumber] = useState(false)
 
   // Load tasks from localStorage
   useEffect(() => {
@@ -216,57 +218,94 @@ export function Tasks() {
 
         {/* Add Task Form */}
         {isAdding && (
-          <Card className="p-6 space-y-4 animate-in fade-in slide-in-from-top-2 duration-200 gap-2">
-            <Input
-              placeholder="Task title *"
-              value={newTitle}
-              onChange={(e) => setNewTitle(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault()
-                  addTask()
-                }
-              }}
-              className="h-11 text-base"
-              autoFocus
-            />
+          <Card className="p-5 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200 gap-3">
+  {/* Title */}
+  <Input
+    placeholder="What do you want to get done?"
+    value={newTitle}
+    onChange={(e) => setNewTitle(e.target.value)}
+    onKeyDown={(e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault()
+        addTask()
+      }
+    }}
+    className="h-11 text-base"
+    autoFocus
+  />
 
-            <Textarea
-              placeholder="Description (optional)"
-              value={newDescription}
-              onChange={(e) => setNewDescription(e.target.value)}
-              rows={3}
-              className="text-base resize-none"
-            />
+  {/* Description */}
+  <div className="relative">
+  {/* Textarea */}
+  <Textarea
+    placeholder="Add details (optional)"
+    value={newDescription}
+    rows={3}
+    className="text-base resize-none pr-10"
+    onChange={(e) => setNewDescription(e.target.value)}
+    onKeyDown={(e) => {
+      if (!autoNumber) return
+      if (e.key !== "Enter") return
 
-            <Input
-              type="datetime-local"
-              value={newDeadline}
-              onChange={(e) => setNewDeadline(e.target.value)}
-            />
+      e.preventDefault()
 
-            <div className="flex gap-3">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setIsAdding(false)
-                  setNewTitle("")
-                  setNewDescription("")
-                }}
-                className="h-11 flex-2"
-              >
-                Cancel
-              </Button>
+      const lines = newDescription.split("\n")
+      const lastLine = lines[lines.length - 1]
+      const match = lastLine.match(/^(\d+)\.\s/)
+      const nextNumber = match ? Number(match[1]) + 1 : 1
 
-              <Button
-                onClick={addTask}
-                className="flex-2 h-11"
-                disabled={!newTitle.trim()}
-              >
-                Add Task
-              </Button>
-            </div>
-          </Card>
+      setNewDescription(newDescription + `\n${nextNumber}. `)
+    }}
+  />
+
+  {/* Auto-number toggle */}
+  <button
+  type="button"
+  onClick={() => setAutoNumber((v) => !v)}
+  title="Auto-number on Enter"
+  className={`absolute top-4 right-4 rounded-md p-1.5 transition-colors ${
+    autoNumber
+      ? "bg-primary text-primary-foreground"
+      : "text-muted-foreground hover:bg-muted"
+  }`}
+>
+  <ListOrdered className="h-4 w-4" />
+</button>
+
+</div>
+
+
+  {/* Deadline */}
+  <Input
+    type="datetime-local"
+    value={newDeadline}
+    onChange={(e) => setNewDeadline(e.target.value)}
+  />
+
+  {/* Actions */}
+  <div className="flex gap-2 pt-1">
+    <Button
+      variant="outline"
+      onClick={() => {
+        setIsAdding(false)
+        setNewTitle("")
+        setNewDescription("")
+      }}
+      className="flex-1 h-11"
+    >
+      Cancel
+    </Button>
+
+    <Button
+      onClick={addTask}
+      className="flex-1 h-11"
+      disabled={!newTitle.trim()}
+    >
+      Add task
+    </Button>
+  </div>
+</Card>
+
         )}
 
         {/* Tasks List */}
@@ -401,71 +440,71 @@ export function Tasks() {
                     </div>
 
                     {/* Actions */}
-<div className="flex flex-col items-center gap-2 flex-shrink-0 self-start pt-1 me-4">
-  <button
-    onClick={() => startEdit(task)}
-    className="h-8 w-8 rounded-md flex items-center justify-center hover:bg-muted transition-colors"
-    aria-label="Edit task"
-  >
-    <svg
-      className="h-4 w-4 text-muted-foreground"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-      />
-    </svg>
-  </button>
+                    <div className="flex flex-col items-center gap-2 flex-shrink-0 self-start pt-1 me-4">
+                      <button
+                        onClick={() => startEdit(task)}
+                        className="h-8 w-8 rounded-md flex items-center justify-center hover:bg-muted transition-colors"
+                        aria-label="Edit task"
+                      >
+                        <svg
+                          className="h-4 w-4 text-muted-foreground"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                          />
+                        </svg>
+                      </button>
 
-  <button
-    onClick={() => setTaskToDelete(task.id)}
-    className="h-8 w-8 rounded-md flex items-center justify-center hover:bg-destructive/10 transition-colors"
-    aria-label="Delete task"
-  >
-    <svg
-      className="h-4 w-4 text-destructive"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-      />
-    </svg>
-  </button>
+                      <button
+                        onClick={() => setTaskToDelete(task.id)}
+                        className="h-8 w-8 rounded-md flex items-center justify-center hover:bg-destructive/10 transition-colors"
+                        aria-label="Delete task"
+                      >
+                        <svg
+                          className="h-4 w-4 text-destructive"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
+                        </svg>
+                      </button>
 
-  <button
-    onClick={() =>
-      window.location.href = `/focus?taskId=${task.id}&title=${encodeURIComponent(
-        task.title
-      )}`
-    }
-    className="h-8 w-8 rounded-md flex items-center justify-center hover:bg-primary/10 transition-colors"
-    aria-label="Focus on task"
-  >
-    <svg
-      className="h-4 w-4 text-primary"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M12 2v4m0 12v4m10-10h-4M6 12H2m15.364-6.364-2.828 2.828M8.464 15.536l-2.828 2.828m0-12.728 2.828 2.828m6.072 6.072 2.828 2.828"
-      />
-    </svg>
-  </button>
-</div>
+                      <button
+                        onClick={() =>
+                          window.location.href = `/focus?taskId=${task.id}&title=${encodeURIComponent(
+                            task.title
+                          )}`
+                        }
+                        className="h-8 w-8 rounded-md flex items-center justify-center hover:bg-primary/10 transition-colors"
+                        aria-label="Focus on task"
+                      >
+                        <svg
+                          className="h-4 w-4 text-primary"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 2v4m0 12v4m10-10h-4M6 12H2m15.364-6.364-2.828 2.828M8.464 15.536l-2.828 2.828m0-12.728 2.828 2.828m6.072 6.072 2.828 2.828"
+                          />
+                        </svg>
+                      </button>
+                    </div>
 
                   </div>
                 )}
@@ -504,8 +543,6 @@ export function Tasks() {
           </div>
         </div>
       )}
-
     </div>
-
   )
 }
