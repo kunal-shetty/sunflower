@@ -44,16 +44,16 @@ export function Tasks() {
   }, [])
 
 
- const scheduleNativeNotification = (task: any) => {
-  if (!task.deadline) return
+  const scheduleNativeNotification = (task: any) => {
+    if (!task.deadline) return
 
-  const deadlineMillis = new Date(task.deadline).getTime()
+    const deadlineMillis = new Date(task.deadline).getTime()
 
-  ;(window as any).Android?.scheduleTaskNotification(
-    task.title,
-    deadlineMillis
-  )
-}
+      ; (window as any).Android?.scheduleTaskNotification(
+        task.title,
+        deadlineMillis
+      )
+  }
 
   // Save tasks to localStorage
   const saveTasks = (updatedTasks: Task[]) => {
@@ -263,8 +263,8 @@ export function Tasks() {
                 onClick={() => setAutoNumber((v) => !v)}
                 title="Auto-number on Enter"
                 className={`absolute top-4 right-4 rounded-md p-1.5 transition-colors ${autoNumber
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-muted"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:bg-muted"
                   }`}
               >
                 <ListOrdered className="h-4 w-4" />

@@ -204,12 +204,12 @@ export function Home({ username }: HomeProps) {
   }, [])
 
   useEffect(() => {
-  const username = localStorage.getItem("taskapp_username")
+    const username = localStorage.getItem("taskapp_username")
 
-  if (username && (window as any).Android) {
-    ;(window as any).Android.scheduleDailyMorningGreeting(username)
-  }
-}, [])
+    if (username && (window as any).Android) {
+      ; (window as any).Android.scheduleDailyMorningGreeting(username)
+    }
+  }, [])
 
 
   const getTasks = () => {
