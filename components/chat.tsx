@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { generateChatResponse, ChatMessage } from "@/app/api/chat/route"
 
-const storedUsername = localStorage.getItem("taskapp_username")
 
 export default function ChatPage() {
+  const storedUsername = localStorage.getItem("taskapp_username")
   const [ready, setReady] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
