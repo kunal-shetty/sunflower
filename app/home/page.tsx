@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation"
 export default function HomePage() {
   const [username, setUsername] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [isOnline, setIsOnline] = useState<boolean | null>(null)
 
   const router = useRouter()
 

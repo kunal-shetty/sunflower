@@ -13,7 +13,8 @@ export default function ClientLayout({
   const showBottomNav =
     pathname === "/home" ||
     pathname === "/tasks" ||
-    pathname === "/settings"
+    pathname === "/settings" ||
+    pathname === "/chat"
 
   return (
     <div className="flex h-[100dvh] flex-col bg-background overflow-hidden">
