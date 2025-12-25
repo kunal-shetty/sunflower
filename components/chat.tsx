@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { generateChatResponse, ChatMessage } from "@/app/api/chat/route"
-
+import { Send } from "lucide-react"
 
 export default function ChatPage() {
   const storedUsername = localStorage.getItem("taskapp_username")
@@ -102,7 +102,7 @@ export default function ChatPage() {
         {loading && (
           <div className="flex justify-start">
             <Card className="px-4 py-3 text-sm bg-muted opacity-70">
-              I’m listening…
+              Thinking....
             </Card>
           </div>
         )}
@@ -118,18 +118,29 @@ export default function ChatPage() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             rows={2}
+            disabled={loading}
             className="resize-none text-base"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault()
+                sendMessage()
+              }
+            }}
           />
 
           <Button
-            onClick={sendMessage}
-            disabled={!input.trim() || loading}
-            className="h-11 px-4"
-          >
-            {loading ? "…" : "Send"}
-          </Button>
-        </div>
+  onClick={sendMessage}
+  disabled={!input.trim() || loading }
+  className="h-11 w-11 p-0 flex items-center justify-center active:scale-95 transition-transform"
+>
+  {loading ? (
+    <span className="animate-pulse">…</span>
+  ) : (
+    <Send className="h-5 w-5" />
+  )}
+</Button>
 
+        </div>
       </div>
     </div>
   )

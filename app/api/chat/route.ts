@@ -59,7 +59,7 @@ Style:
 
 Response rules:
 - Respond in 3–6 short bullet points
-- Keep responses under 80 words
+- Keep responses under 60 words
 - Use plain text only
 - Do not use markdown, emojis, or asterisks
 - Avoid clinical or technical language
