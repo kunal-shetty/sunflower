@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Check, Pause, Play } from "lucide-react"
+import { Check, Pause, Play, TimerOff } from "lucide-react"
 
 export default function FocusContent() {
   const [hours, setHours] = useState("")
@@ -44,7 +44,6 @@ export default function FocusContent() {
       console.error("Failed to mark task complete", err)
     }
   }
-
 
   useEffect(() => {
     try {
@@ -104,7 +103,7 @@ export default function FocusContent() {
   }
 
 
-  // 🌻 COMPLETION
+  // COMPLETION
   if (completed) {
     return (
       <div className="flex min-h-screen items-center justify-center px-4 py-8">
@@ -250,7 +249,7 @@ export default function FocusContent() {
                 className="w-full h-11 text-base font-medium text-destructive hover:text-destructive"
                 onClick={() => setShowEndConfirm(true)}
               >
-                End Session Early
+                <TimerOff/> End Session Early
               </Button>
             </div>
           </>
