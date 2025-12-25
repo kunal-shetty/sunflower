@@ -44,17 +44,16 @@ export function Tasks() {
   }, [])
 
 
-  const scheduleNativeNotification = (task: any) => {
-    if (!task.deadline) return
+ const scheduleNativeNotification = (task: any) => {
+  if (!task.deadline) return
 
-    const deadlineMillis = new Date(task.deadline).getTime()
+  const deadlineMillis = new Date(task.deadline).getTime()
 
-      ; (window as any).Android?.scheduleTaskNotification(
-        task.title,
-        deadlineMillis
-      )
-  }
-
+  ;(window as any).Android?.scheduleTaskNotification(
+    task.title,
+    deadlineMillis
+  )
+}
 
   // Save tasks to localStorage
   const saveTasks = (updatedTasks: Task[]) => {
@@ -219,92 +218,91 @@ export function Tasks() {
         {/* Add Task Form */}
         {isAdding && (
           <Card className="p-5 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200 gap-3">
-  {/* Title */}
-  <Input
-    placeholder="What do you want to get done?"
-    value={newTitle}
-    onChange={(e) => setNewTitle(e.target.value)}
-    onKeyDown={(e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault()
-        addTask()
-      }
-    }}
-    className="h-11 text-base"
-    autoFocus
-  />
+            {/* Title */}
+            <Input
+              placeholder="What do you want to get done?"
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault()
+                  addTask()
+                }
+              }}
+              className="h-11 text-base"
+              autoFocus
+            />
 
-  {/* Description */}
-  <div className="relative">
-  {/* Textarea */}
-  <Textarea
-    placeholder="Add details (optional)"
-    value={newDescription}
-    rows={3}
-    className="text-base resize-none pr-10"
-    onChange={(e) => setNewDescription(e.target.value)}
-    onKeyDown={(e) => {
-      if (!autoNumber) return
-      if (e.key !== "Enter") return
+            {/* Description */}
+            <div className="relative">
+              {/* Textarea */}
+              <Textarea
+                placeholder="Add details (optional)"
+                value={newDescription}
+                rows={3}
+                className="text-base resize-none pr-10"
+                onChange={(e) => setNewDescription(e.target.value)}
+                onKeyDown={(e) => {
+                  if (!autoNumber) return
+                  if (e.key !== "Enter") return
 
-      e.preventDefault()
+                  e.preventDefault()
 
-      const lines = newDescription.split("\n")
-      const lastLine = lines[lines.length - 1]
-      const match = lastLine.match(/^(\d+)\.\s/)
-      const nextNumber = match ? Number(match[1]) + 1 : 1
+                  const lines = newDescription.split("\n")
+                  const lastLine = lines[lines.length - 1]
+                  const match = lastLine.match(/^(\d+)\.\s/)
+                  const nextNumber = match ? Number(match[1]) + 1 : 1
 
-      setNewDescription(newDescription + `\n${nextNumber}. `)
-    }}
-  />
+                  setNewDescription(newDescription + `\n${nextNumber}. `)
+                }}
+              />
 
-  {/* Auto-number toggle */}
-  <button
-  type="button"
-  onClick={() => setAutoNumber((v) => !v)}
-  title="Auto-number on Enter"
-  className={`absolute top-4 right-4 rounded-md p-1.5 transition-colors ${
-    autoNumber
-      ? "bg-primary text-primary-foreground"
-      : "text-muted-foreground hover:bg-muted"
-  }`}
->
-  <ListOrdered className="h-4 w-4" />
-</button>
+              {/* Auto-number toggle */}
+              <button
+                type="button"
+                onClick={() => setAutoNumber((v) => !v)}
+                title="Auto-number on Enter"
+                className={`absolute top-4 right-4 rounded-md p-1.5 transition-colors ${autoNumber
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-muted"
+                  }`}
+              >
+                <ListOrdered className="h-4 w-4" />
+              </button>
 
-</div>
+            </div>
 
 
-  {/* Deadline */}
-  <Input
-    type="datetime-local"
-    value={newDeadline}
-    onChange={(e) => setNewDeadline(e.target.value)}
-  />
+            {/* Deadline */}
+            <Input
+              type="datetime-local"
+              value={newDeadline}
+              onChange={(e) => setNewDeadline(e.target.value)}
+            />
 
-  {/* Actions */}
-  <div className="flex gap-2 pt-1">
-    <Button
-      variant="outline"
-      onClick={() => {
-        setIsAdding(false)
-        setNewTitle("")
-        setNewDescription("")
-      }}
-      className="flex-1 h-11"
-    >
-      Cancel
-    </Button>
+            {/* Actions */}
+            <div className="flex gap-2 pt-1">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setIsAdding(false)
+                  setNewTitle("")
+                  setNewDescription("")
+                }}
+                className="flex-1 h-11"
+              >
+                Cancel
+              </Button>
 
-    <Button
-      onClick={addTask}
-      className="flex-1 h-11"
-      disabled={!newTitle.trim()}
-    >
-      Add task
-    </Button>
-  </div>
-</Card>
+              <Button
+                onClick={addTask}
+                className="flex-1 h-11"
+                disabled={!newTitle.trim()}
+              >
+                Add task
+              </Button>
+            </div>
+          </Card>
 
         )}
 
@@ -442,6 +440,7 @@ export function Tasks() {
                     {/* Actions */}
                     <div className="flex flex-col items-center gap-2 flex-shrink-0 self-start pt-1 me-4">
                       <button
+                        disabled={task.completed}
                         onClick={() => startEdit(task)}
                         className="h-8 w-8 rounded-md flex items-center justify-center hover:bg-muted transition-colors"
                         aria-label="Edit task"
@@ -462,6 +461,7 @@ export function Tasks() {
                       </button>
 
                       <button
+                        disabled={task.completed}
                         onClick={() => setTaskToDelete(task.id)}
                         className="h-8 w-8 rounded-md flex items-center justify-center hover:bg-destructive/10 transition-colors"
                         aria-label="Delete task"
@@ -482,6 +482,7 @@ export function Tasks() {
                       </button>
 
                       <button
+                        disabled={task.completed}
                         onClick={() =>
                           window.location.href = `/focus?taskId=${task.id}&title=${encodeURIComponent(
                             task.title

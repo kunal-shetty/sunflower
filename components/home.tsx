@@ -103,7 +103,6 @@ const FloatingEmojis = ({ emoji }: { emoji: string }) => {
   )
 }
 
-
 export function Home({ username }: HomeProps) {
   const [quote, setQuote] = useState(quotes[0])
   const [greeting, setGreeting] = useState("Hello")
@@ -203,6 +202,15 @@ export function Home({ username }: HomeProps) {
     const interval = setInterval(updateDeadlineInfo, 60000)
     return () => clearInterval(interval)
   }, [])
+
+  useEffect(() => {
+  const username = localStorage.getItem("taskapp_username")
+
+  if (username && (window as any).Android) {
+    ;(window as any).Android.scheduleDailyMorningGreeting(username)
+  }
+}, [])
+
 
   const getTasks = () => {
     try {
