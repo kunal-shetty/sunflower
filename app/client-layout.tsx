@@ -11,10 +11,12 @@ export default function ClientLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
-  const [isOnline, setIsOnline] = useState(true)
+
+  // Start as null (unknown), NOT true/false
+  const [isOnline, setIsOnline] = useState<boolean | null>(null)
 
   useEffect(() => {
-    // Initial state
+    // Now we are 100% in browser
     setIsOnline(navigator.onLine)
 
     const handleOnline = () => setIsOnline(true)
@@ -29,7 +31,12 @@ export default function ClientLayout({
     }
   }, [])
 
-  // 🌻 OFFLINE UI (no bottom nav, no routing confusion)
+  // ⏳ While status is unknown, don't render anything yet
+  if (isOnline === null) {
+    return null
+  }
+
+  // 🌻 Offline UI
   if (!isOnline) {
     return <OfflineScreen />
   }
@@ -37,8 +44,8 @@ export default function ClientLayout({
   const showBottomNav =
     pathname === "/home" ||
     pathname === "/tasks" ||
-    pathname === "/settings"
-    
+    pathname === "/settings" 
+
   return (
     <div className="flex h-[100dvh] flex-col bg-background overflow-hidden">
       <main className="flex-1 overflow-y-auto overscroll-none">
