@@ -43,15 +43,15 @@ export function Tasks() {
 
 
   const scheduleNativeNotification = (task: any) => {
-  if (!task.deadline) return
+    if (!task.deadline) return
 
-  const deadlineMillis = new Date(task.deadline).getTime()
+    const deadlineMillis = new Date(task.deadline).getTime()
 
-  ;(window as any).Android?.scheduleTaskNotification(
-    task.title,
-    deadlineMillis
-  )
-}
+      ; (window as any).Android?.scheduleTaskNotification(
+        task.title,
+        deadlineMillis
+      )
+  }
 
 
   // Save tasks to localStorage
@@ -65,54 +65,54 @@ export function Tasks() {
   }
 
   const addTask = () => {
-  if (!newTitle.trim()) return
+    if (!newTitle.trim()) return
 
-  const newTask: Task = {
-    id: Date.now().toString(),
-    title: newTitle.trim(),
-    description: newDescription.trim(),
-    deadline: newDeadline,
-    completed: false,
-    createdAt: Date.now(),
+    const newTask: Task = {
+      id: Date.now().toString(),
+      title: newTitle.trim(),
+      description: newDescription.trim(),
+      deadline: newDeadline,
+      completed: false,
+      createdAt: Date.now(),
+    }
+
+    const updatedTasks = [newTask, ...tasks]
+    saveTasks(updatedTasks)
+
+    scheduleNativeNotification(newTask)
+
+    setNewTitle("")
+    setNewDescription("")
+    setNewDeadline("")
+    setIsAdding(false)
   }
 
-  const updatedTasks = [newTask, ...tasks]
-  saveTasks(updatedTasks)
-
-  scheduleNativeNotification(newTask)
-
-  setNewTitle("")
-  setNewDescription("")
-  setNewDeadline("")
-  setIsAdding(false)
-}
-
   const toggleComplete = (id: string) => {
-  const updated = tasks.map((task) => {
-    if (task.id === id) {
-      if (!task.completed) {
-        //  cancel when marking complete
-        ;(window as any).Android?.cancelTaskNotification(task.title)
+    const updated = tasks.map((task) => {
+      if (task.id === id) {
+        if (!task.completed) {
+          //  cancel when marking complete
+          ; (window as any).Android?.cancelTaskNotification(task.title)
+        }
+
+        return { ...task, completed: !task.completed }
       }
+      return task
+    })
 
-      return { ...task, completed: !task.completed }
-    }
-    return task
-  })
-
-  saveTasks(updated)
-}
+    saveTasks(updated)
+  }
 
 
   const deleteTask = (id: string) => {
-  const task = tasks.find(t => t.id === id)
+    const task = tasks.find(t => t.id === id)
 
-  if (task) {
-    ;(window as any).Android?.cancelTaskNotification(task.title)
+    if (task) {
+      ; (window as any).Android?.cancelTaskNotification(task.title)
+    }
+
+    saveTasks(tasks.filter((task) => task.id !== id))
   }
-
-  saveTasks(tasks.filter((task) => task.id !== id))
-}
 
   const startEdit = (task: Task) => {
     setEditingId(task.id)
@@ -122,27 +122,27 @@ export function Tasks() {
   }
 
   const saveEdit = () => {
-  if (!editingId || !editTitle.trim()) return
+    if (!editingId || !editTitle.trim()) return
 
-  const updatedTasks = tasks.map(t => {
-    if (t.id === editingId) {
-      const updatedTask = {
-        ...t,
-        title: editTitle.trim(),
-        description: editDescription.trim(),
-        deadline: editDeadline,
+    const updatedTasks = tasks.map(t => {
+      if (t.id === editingId) {
+        const updatedTask = {
+          ...t,
+          title: editTitle.trim(),
+          description: editDescription.trim(),
+          deadline: editDeadline,
+        }
+
+        scheduleNativeNotification(updatedTask)
+
+        return updatedTask
       }
+      return t
+    })
 
-      scheduleNativeNotification(updatedTask)
-
-      return updatedTask
-    }
-    return t
-  })
-
-  saveTasks(updatedTasks)
-  cancelEdit()
-}
+    saveTasks(updatedTasks)
+    cancelEdit()
+  }
 
 
   const cancelEdit = () => {
@@ -441,6 +441,31 @@ export function Tasks() {
                           />
                         </svg>
                       </button>
+
+                      <button
+                        onClick={() =>
+                          window.location.href = `/focus?taskId=${task.id}&title=${encodeURIComponent(
+                            task.title
+                          )}`
+                        }
+                        className="h-9 w-9 rounded-md flex items-center justify-center hover:bg-primary/10 transition-colors"
+                        aria-label="Focus on task"
+                      >
+                        <svg
+                          className="h-4 w-4 text-primary"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 2v4m0 12v4m10-10h-4M6 12H2m15.364-6.364-2.828 2.828M8.464 15.536l-2.828 2.828m0-12.728 2.828 2.828m6.072 6.072 2.828 2.828"
+                          />
+                        </svg>
+                      </button>
+
 
                     </div>
                   </div>

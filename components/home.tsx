@@ -34,7 +34,7 @@ const SPECIAL_DAYS: SpecialDay[] = [
 
   { month: 4, day: 1, title: "May Day", message: "A fresh month — set one intention for the next 30 days ✨", emoji: "✨" },
 
-{ month: 7, day: 7, title: "I Love You", message: "", emoji: "💗"},
+  { month: 7, day: 7, title: "I Love You", message: "", emoji: "💗" },
   { month: 7, day: 15, title: "Independence Day (India)", message: "Celebrate freedom, unity, and progress", emoji: "" },
 
   { month: 7, day: 30, title: "Friendship Day", message: "Thank you for being my bestest friend 🤝", emoji: "💛" },
@@ -213,7 +213,7 @@ export function Home({ username }: HomeProps) {
   }
 
   return (
-    <div className="min-h-[calc(100vh-5rem)] px-6 py-8">
+    <div className="min-h-[calc(100vh-5rem)] px-6 py-14 mb-10">
       <div className="mx-auto max-w-2xl space-y-8">
 
         {/* Greeting */}

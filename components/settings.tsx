@@ -328,7 +328,7 @@ export function Settings({ username, onNameChange }: SettingsProps) {
             </div>
             <div>
               <h3 className="text-base font-medium text-foreground">Sunflower</h3>
-              <p className="text-sm text-muted-foreground mt-1">Version 1.0.0</p>
+              <p className="text-sm text-muted-foreground mt-1">Version 1.1.0</p>
             </div>
           </div>
         </Card>
