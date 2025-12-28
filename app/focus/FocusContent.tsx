@@ -19,27 +19,17 @@ export default function FocusContent() {
   const params = useSearchParams()
   const taskId = params.get("taskId")
 
-
   const [theme, setTheme] = useState<"light" | "dark">("light")
 
   const markTaskAsCompleted = () => {
     if (!taskId) return
 
     try {
-      const stored = JSON.parse(
-        localStorage.getItem("taskapp_tasks") || "[]"
-      )
+      const stored = JSON.parse(localStorage.getItem("taskapp_tasks") || "[]")
 
-      const updated = stored.map((task: any) =>
-        task.id === taskId
-          ? { ...task, completed: true }
-          : task
-      )
+      const updated = stored.map((task: any) => (task.id === taskId ? { ...task, completed: true } : task))
 
-      localStorage.setItem(
-        "taskapp_tasks",
-        JSON.stringify(updated)
-      )
+      localStorage.setItem("taskapp_tasks", JSON.stringify(updated))
     } catch (err) {
       console.error("Failed to mark task complete", err)
     }
@@ -75,9 +65,9 @@ export default function FocusContent() {
   }, [isRunning, secondsLeft])
 
   const startFocus = () => {
-    const h = parseInt(hours) || 0
-    const m = parseInt(minutes) || 0
-    const s = parseInt(seconds) || 0
+    const h = Number.parseInt(hours) || 0
+    const m = Number.parseInt(minutes) || 0
+    const s = Number.parseInt(seconds) || 0
 
     const totalSeconds = h * 3600 + m * 60 + s
     if (totalSeconds <= 0) return
@@ -90,9 +80,7 @@ export default function FocusContent() {
     const h = Math.floor(s / 3600)
     const m = Math.floor((s % 3600) / 60)
     const sec = s % 60
-    return `${h.toString().padStart(2, "0")}:${m
-      .toString()
-      .padStart(2, "0")}:${sec.toString().padStart(2, "0")}`
+    return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${sec.toString().padStart(2, "0")}`
   }
 
   const goBack = () => {
@@ -101,7 +89,6 @@ export default function FocusContent() {
     setSeconds("")
     router.push("/tasks")
   }
-
 
   // COMPLETION
   if (completed) {
@@ -113,9 +100,7 @@ export default function FocusContent() {
             <h2 className="text-2xl font-bold bg-clip-text bg-gradient-to-r from-yellow-600 via-red-400 to-orange-600 text-transparent">
               Focus Session Complete!
             </h2>
-            <p className="text-muted-foreground">
-              You've successfully completed your focus session!
-            </p>
+            <p className="text-muted-foreground">You've successfully completed your focus session!</p>
           </div>
           <Button className="w-full h-11 text-base" onClick={goBack}>
             Back to Tasks
@@ -155,9 +140,7 @@ export default function FocusContent() {
                     onChange={(e) => setHours(e.target.value)}
                     className="text-center text-lg font-mono h-14"
                   />
-                  <label className="block text-xs text-center text-muted-foreground font-medium">
-                    Hours
-                  </label>
+                  <label className="block text-xs text-center text-muted-foreground font-medium">Hours</label>
                 </div>
 
                 <div className="space-y-2">
@@ -170,9 +153,7 @@ export default function FocusContent() {
                     onChange={(e) => setMinutes(e.target.value)}
                     className="text-center text-lg font-mono h-14"
                   />
-                  <label className="block text-xs text-center text-muted-foreground font-medium">
-                    Minutes
-                  </label>
+                  <label className="block text-xs text-center text-muted-foreground font-medium">Minutes</label>
                 </div>
 
                 <div className="space-y-2">
@@ -185,9 +166,7 @@ export default function FocusContent() {
                     onChange={(e) => setSeconds(e.target.value)}
                     className="text-center text-lg font-mono h-14"
                   />
-                  <label className="block text-xs text-center text-muted-foreground font-medium">
-                    Seconds
-                  </label>
+                  <label className="block text-xs text-center text-muted-foreground font-medium">Seconds</label>
                 </div>
               </div>
             </div>
@@ -199,15 +178,43 @@ export default function FocusContent() {
         ) : (
           <>
             {/* Timer */}
-            <div className="flex justify-center py-4">
-              <div className="relative h-48 w-48 sm:h-56 sm:w-56">
-                <div className="absolute inset-0 rounded-full border-8 border-primary/20"></div>
-                <div className="absolute inset-0 rounded-full border-8 border-transparent border-t-primary animate-spin" style={{ animationDuration: isRunning ? "3s" : "0s" }}
-                ></div>
-                <div className="absolute inset-0 flex items-center justify-center">
+            <div className="flex justify-center py-8">
+              <div className="relative h-56 w-56 sm:h-64 sm:w-64">
+                {/* Outer glow ring */}
+                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-orange-500/20 to-yellow-500/20 blur-xl"></div>
+
+                {/* Base circle */}
+                <div className="absolute inset-0 rounded-full border-[6px] border-muted"></div>
+
+                {/* Animated progress circle */}
+                <svg className="absolute inset-0 -rotate-90" viewBox="0 0 100 100">
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="45"
+                    fill="none"
+                    stroke="url(#gradient)"
+                    strokeWidth="6"
+                    strokeDasharray={`${(secondsLeft / ((Number.parseInt(hours) || 0) * 3600 + (Number.parseInt(minutes) || 0) * 60 + (Number.parseInt(seconds) || 0))) * 283} 283`}
+                    strokeLinecap="round"
+                    className="transition-all duration-1000"
+                  />
+                  <defs>
+                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="rgb(249, 115, 22)" />
+                      <stop offset="100%" stopColor="rgb(234, 179, 8)" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+
+                {/* Center content */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
                   <span className="text-3xl sm:text-4xl font-mono font-bold tracking-wider">
                     {formatTime(secondsLeft)}
                   </span>
+                  {isRunning && (
+                    <span className="text-xs text-muted-foreground mt-2 animate-pulse">Stay focused...</span>
+                  )}
                 </div>
               </div>
             </div>
@@ -216,7 +223,7 @@ export default function FocusContent() {
             <div className="space-y-3">
               <Button
                 variant="outline"
-                className="w-full h-11 text-base font-medium flex items-center justify-center gap-2"
+                className="w-full h-11 text-base font-medium flex items-center justify-center gap-2 bg-transparent"
                 onClick={() => setIsRunning((v) => !v)}
               >
                 {isRunning ? (
@@ -232,14 +239,12 @@ export default function FocusContent() {
                 )}
               </Button>
 
-
               <Button
                 className="w-full h-11 text-base font-medium"
                 onClick={() => {
                   setCompleted(true)
                   markTaskAsCompleted()
-                }
-                }
+                }}
               >
                 <Check /> Complete Focus Session
               </Button>
@@ -249,7 +254,7 @@ export default function FocusContent() {
                 className="w-full h-11 text-base font-medium text-destructive hover:text-destructive"
                 onClick={() => setShowEndConfirm(true)}
               >
-                <TimerOff/> End Session Early
+                <TimerOff /> End Session Early
               </Button>
             </div>
           </>
@@ -261,28 +266,18 @@ export default function FocusContent() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 backdrop-blur-sm">
           <Card className="w-full max-w-sm p-6 space-y-5 text-center shadow-2xl">
             <div className="space-y-2">
-              <h3 className="text-xl font-bold">
-                End Focus Session?
-              </h3>
+              <h3 className="text-xl font-bold">End Focus Session?</h3>
               <p className="text-sm text-muted-foreground">
                 Ending now means your progress won't be saved and the task won't be marked as complete.
               </p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3">
-              <Button
-                variant="outline"
-                className="flex-1 h-11"
-                onClick={() => setShowEndConfirm(false)}
-              >
+              <Button variant="outline" className="flex-1 h-11 bg-transparent" onClick={() => setShowEndConfirm(false)}>
                 Keep Focusing
               </Button>
 
-              <Button
-                variant="destructive"
-                className="flex-1 h-11"
-                onClick={goBack}
-              >
+              <Button variant="destructive" className="flex-1 h-11" onClick={goBack}>
                 End Session
               </Button>
             </div>

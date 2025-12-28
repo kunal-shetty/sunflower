@@ -5,11 +5,11 @@ import { BottomNav } from "@/components/bottom-nav"
 import { useEffect, useRef, useState } from "react"
 
 const PLAYLIST = [
-  "/music/Track-1.mp3",
-  "/music/Track-2.mp3",
-  "/music/Track-3.mp3",
-  "/music/Track-4.mp3",
-  "/music/Track-5.mp3",
+  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/git-blob/prj_PLQ6VM1OkPdVU4uL6SjirdDC9s80/F9xc6tgGZLG5qN-N6hJrbB/public/music/Track-1.mp3",
+  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/git-blob/prj_PLQ6VM1OkPdVU4uL6SjirdDC9s80/j9nhbN-boKKP3-ee-AJSSs/public/music/Track-2.mp3",
+  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/git-blob/prj_PLQ6VM1OkPdVU4uL6SjirdDC9s80/aUk0_8keqfcHtfp8SR7Nmv/public/music/Track-3.mp3",
+  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/git-blob/prj_PLQ6VM1OkPdVU4uL6SjirdDC9s80/dQjYIWM1JdZzf94Ne_6hkf/public/music/Track-4.mp3",
+  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/git-blob/prj_PLQ6VM1OkPdVU4uL6SjirdDC9s80/itXJQv4wUk31HL2dJelU3m/public/music/Track-5.mp3",
 ]
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {

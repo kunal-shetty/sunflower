@@ -6,9 +6,24 @@ import confetti from "canvas-confetti"
 
 /* 🌻 Cute, calm, repeat-safe emojis */
 const ALL_EMOJIS = [
-  "🌻","🌸","🌼","🌷","🪷","💐","🪴","🍃",
-  "✨","⭐","🌈","🌙","☁️",
-  "💛","💖","💗","🤍","💫"
+  "🌻",
+  "🌸",
+  "🌼",
+  "🌷",
+  "🪷",
+  "💐",
+  "🪴",
+  "🍃",
+  "✨",
+  "⭐",
+  "🌈",
+  "🌙",
+  "☁️",
+  "💛",
+  "💖",
+  "💗",
+  "🤍",
+  "💫",
 ]
 
 /* 🔢 Progressive EVEN grids only */
@@ -34,22 +49,16 @@ export default function TileFlip() {
   const [locked, setLocked] = useState(false)
   const [showLevelComplete, setShowLevelComplete] = useState(false)
 
-  const grid =
-    GRID_LEVELS[Math.min(level - 1, GRID_LEVELS.length - 1)]
+  const grid = GRID_LEVELS[Math.min(level - 1, GRID_LEVELS.length - 1)]
 
   const totalTiles = grid.rows * grid.cols
   const pairs = totalTiles / 2
 
   /* 🔄 Setup board safely */
   useEffect(() => {
-    const selected = Array.from(
-      { length: pairs },
-      (_, i) => ALL_EMOJIS[i % ALL_EMOJIS.length]
-    )
+    const selected = Array.from({ length: pairs }, (_, i) => ALL_EMOJIS[i % ALL_EMOJIS.length])
 
-    const shuffled = [...selected, ...selected].sort(
-      () => Math.random() - 0.5
-    )
+    const shuffled = [...selected, ...selected].sort(() => Math.random() - 0.5)
 
     setTiles(shuffled)
     setFlipped([])
@@ -98,40 +107,37 @@ export default function TileFlip() {
   /* 🎉 Level completed */
   useEffect(() => {
     if (tiles.length && matched.length === tiles.length) {
-      confetti({
-        particleCount: 120,
-        spread: 70,
-        origin: { y: 0.7 },
-      })
+      if (level === 3 || level === 5 || level >= 7) {
+        confetti({
+          particleCount: 120,
+          spread: 70,
+          origin: { y: 0.7 },
+        })
+      }
 
       setTimeout(() => {
         setShowLevelComplete(true)
       }, 800)
     }
-  }, [matched, tiles])
+  }, [matched, tiles, level])
 
   return (
     <div className="flex flex-col gap-4 p-4">
       {/* Header */}
       <div className="flex items-center justify-between text-sm font-medium">
         <span>Level {level}</span>
-        <span>{grid.rows}×{grid.cols}</span>
+        <span>
+          {grid.rows}×{grid.cols}
+        </span>
       </div>
 
       {/* Grid */}
-      <div
-        className="grid gap-3"
-        style={{ gridTemplateColumns: `repeat(${grid.cols}, 1fr)` }}
-      >
+      <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${grid.cols}, 1fr)` }}>
         {tiles.map((emoji, i) => {
           const isOpen = flipped.includes(i) || matched.includes(i)
 
           return (
-            <div
-              key={i}
-              onClick={() => flipTile(i)}
-              className="perspective"
-            >
+            <div key={i} onClick={() => flipTile(i)} className="perspective">
               <div
                 className={`relative w-full aspect-square transition-transform duration-500 transform-style-preserve-3d ${
                   isOpen ? "rotate-y-180" : ""
@@ -155,9 +161,7 @@ export default function TileFlip() {
         <span>Moves {moves}</span>
         <span className="text-base">
           Score {score}
-          {combo > 1 && (
-            <span className="ml-1 text-primary">×{combo}</span>
-          )}
+          {combo > 1 && <span className="ml-1 text-primary">×{combo}</span>}
         </span>
       </div>
 
@@ -167,13 +171,9 @@ export default function TileFlip() {
           <Card className="w-full max-w-sm p-6 space-y-4 text-center animate-in fade-in zoom-in-95">
             <div className="text-4xl">🌻</div>
 
-            <h2 className="text-lg font-semibold">
-              Level Complete!
-            </h2>
+            <h2 className="text-lg font-semibold">Level Complete!</h2>
 
-            <p className="text-sm text-muted-foreground">
-              Nice focus. Ready for the next one?
-            </p>
+            <p className="text-sm text-muted-foreground">Nice focus. Ready for the next one?</p>
 
             <div className="flex gap-3">
               <Card
