@@ -124,7 +124,6 @@ export function BottomNav() {
     //     </svg>
     //   ),
     // },
-
     {
       id: "settings",
       label: "Settings",
