@@ -482,7 +482,6 @@ export function Tasks() {
                       </button>
 
                       <button
-                        disabled={task.completed}
                         onClick={() =>
                           window.location.href = `/focus?taskId=${task.id}&title=${encodeURIComponent(
                             task.title

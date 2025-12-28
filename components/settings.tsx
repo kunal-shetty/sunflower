@@ -15,6 +15,8 @@ export function Settings({ username, onNameChange }: SettingsProps) {
   const [theme, setTheme] = useState<"light" | "dark">("light")
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [showResetConfirmation, setShowResetConfirmation] = useState(false)
+  const [musicEnabled, setMusicEnabled] = useState(false)
+const [volume, setVolume] = useState(60)
   const [newUsername, setNewUsername] = useState(username)
   const router = useRouter()
 
@@ -109,6 +111,19 @@ export function Settings({ username, onNameChange }: SettingsProps) {
     router.push("/")
   }
 
+  const handleVolumeChange = (value: number) => {
+  setVolume(value)
+  localStorage.setItem("taskapp_music_volume", String(value))
+}
+
+
+const toggleMusic = () => {
+  const next = !musicEnabled
+  setMusicEnabled(next)
+  localStorage.setItem("taskapp_music_enabled", String(next))
+}
+
+
   return (
     <div className="px-6 py-12">
       <div className="mx-auto max-w-2xl space-y-6">
@@ -165,6 +180,51 @@ export function Settings({ username, onNameChange }: SettingsProps) {
             </button>
           </div>
         </Card>
+
+{/* Music Settings */}
+{/* <Card className="p-6">
+  <div className="space-y-4">
+    <div className="flex items-center justify-between">
+      <div className="space-y-1">
+        <h3 className="text-base font-medium text-foreground">Music</h3>
+        <p className="text-sm text-muted-foreground">
+          {musicEnabled ? "Background music on" : "Music off"}
+        </p>
+      </div>
+
+      <button
+  onClick={toggleMusic}
+  className="relative h-7 w-14 rounded-full bg-secondary transition-colors hover:bg-secondary/80"
+  aria-label="Toggle music"
+>
+  <div
+    className={`absolute top-0.5 h-6 w-6 rounded-full bg-primary transition-transform duration-200 ${
+      musicEnabled ? "translate-x-7" : "translate-x-0.5"
+    }`}
+  />
+</button>
+
+    </div>
+
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <span className="text-sm text-muted-foreground">Volume</span>
+        <span className="text-sm text-muted-foreground">{volume}%</span>
+      </div>
+
+      <input
+        type="range"
+        min="0"
+        max="100"
+        value={volume}
+        disabled={!musicEnabled}
+        onChange={(e) => handleVolumeChange(Number(e.target.value))}
+        className="w-full accent-primary disabled:opacity-50"
+      />
+    </div>
+  </div>
+</Card> */}
+
 
         {/* Export Tasks */}
         <Card className="p-6">
